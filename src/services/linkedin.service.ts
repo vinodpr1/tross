@@ -16,7 +16,7 @@ export class LinkedInService {
     const normalizedVanityName = vanityName.trim().toLowerCase();
 
     if (!normalizedVanityName) {
-      throw new AppError(400, "LinkedIn profile URL is required");
+      throw new AppError(400, "LinkedIn profile URL is Required");
     }
 
     if (!/^[a-z0-9-]+$/i.test(normalizedVanityName)) {
