@@ -22,5 +22,5 @@ jobs:
         with: 
           context: .
           file: Dockerfile
-          tags: ${{ secrets.DOCKER_USERNAME }}/server:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/tross-backend:${{ github.sha }}
           push: true
