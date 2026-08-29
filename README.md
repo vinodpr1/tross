@@ -75,3 +75,6 @@ curl -sk -X POST https://localhost:3100/api/v1/linkedin/profile \
   -H "Content-Type: application/json" \
   -d '{"url":"https://www.linkedin.com/in/bill-gates/"}'
 ```
+
+
+#Docker fixes
