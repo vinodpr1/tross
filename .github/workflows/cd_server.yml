@@ -32,4 +32,4 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
           chmod 700 /home/runner/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@65.1.248.25 -t "docker stop tross_backend || true && docker rm tross_backend || true && docker run --name tross_backend -d -p 3100:3100 ${{ secrets.DOCKER_USERNAME }}/tross-backend:${{ github.sha }}"
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@65.1.248.25 -t "docker stop tross_backend || true && docker rm tross_backend || true && docker run --name tross_backend -d -p 3100:3100 -e LINKEDIN_LI_AT='${{ secrets.LINKEDIN_LI_AT }}' -e LINKEDIN_JSESSIONID='${{ secrets.LINKEDIN_JSESSIONID }}' -e LINKEDIN_CSRF_TOKEN='${{ secrets.LINKEDIN_CSRF_TOKEN }}' -e LINKEDIN_BSCOOKIE='${{ secrets.LINKEDIN_BSCOOKIE }}' ${{ secrets.DOCKER_USERNAME }}/tross-backend:${{ github.sha }}"
