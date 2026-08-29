@@ -20,7 +20,7 @@ export class LinkedInService {
     }
 
     if (!/^[a-z0-9-]+$/i.test(normalizedVanityName)) {
-      throw new AppError(400, "LinkedIn profile URL contains an invalid username");
+      throw new AppError(400, "LinkedIn Profile URL contains an invalid username");
     }
 
     const responses =
