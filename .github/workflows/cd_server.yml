@@ -24,3 +24,9 @@ jobs:
           file: Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/tross-backend:${{ github.sha }}
           push: true
+
+      - name: Deploy to VM
+      - run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
+          chmod 700 /home/runner/ssh_key
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@65.1.248.25 -t "docker stop tross_backend && docker run --name tross_backend -d -p 3100:3100 ${{ secrets.DOCKER_USERNAME }}/tross-backend:${{ github.sha }}"
