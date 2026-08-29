@@ -18,7 +18,7 @@ export function startServer() {
 
   app.get("/", (_req, res) => {
     res.json({
-      status: "Health check successful",
+      status: "Health check successful!",
       timestamp: new Date().toISOString(),
     });
   });
