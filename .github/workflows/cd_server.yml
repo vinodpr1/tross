@@ -25,9 +25,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/tross-backend:${{ github.sha }}
           push: true
 
-      - name: Fix Docker socket permissions
-        run: sudo chmod 666 /var/run/docker.sock
-
       - name: Deploy to VM
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key

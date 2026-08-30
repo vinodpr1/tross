@@ -21,5 +21,4 @@ coverage
 README.md
 
 Dockerfile
-docker-compose.yml
 .dockerignore

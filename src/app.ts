@@ -26,7 +26,7 @@ export function startServer() {
   app.use("/api/v1", createApiRouter());
 
   app.use((_req, res) => {
-    res.status(404).json({ error: "Not Found" });
+    res.status(404).json({ error: "Endpoint not found" });
   });
 
   return app;
