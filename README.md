@@ -1,6 +1,6 @@
 # LinkedIn Profile API
 
-This project is a small backend service that takes a LinkedIn profile URL and returns the profile data as JSON — things like name, headline, experience, education, images, and so on.
+This project is a Small backend service that takes a LinkedIn profile URL and returns the profile data as JSON — things like name, headline, experience, education, images, and so on.
 
 **Live endpoint:** http://65.1.248.25:3100
 
