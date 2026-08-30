@@ -10,7 +10,7 @@ Fair warning: the live API is running on a plain EC2 IP over HTTP right now. I h
 
 ## How it works
 
-I didn't use Puppeteer or any headless browser, and I didn't use LinkedIn's official API either.
+I didn't Use Puppeteer or any headless browser, and I didn't use LinkedIn's official API either.
 
 What I did instead was open Chrome DevTools, visit a few LinkedIn profiles, and watch what network calls the site actually makes. Turns out LinkedIn loads profile pages through internal SDUI endpoints — basically POST requests to URLs like: 
 
@@ -24,13 +24,9 @@ The server replays those same requests using session cookies from a logged-in Li
 
 The flow is pretty straightforward:
 
-```
-POST /api/v1/linkedin/profile  →  controller  →  service  →  repository  →  LinkedIn
-                                                                              ↓
-                                                                         RSC parser
-                                                                              ↓
-                                                                         JSON response
-```
+![How the API works](docs/how-it-works.png)
+
+Client sends a profile URL to `http://65.1.248.25:3100/api/v1/linkedin/profile`. That hits the Docker container on EC2 (port 3100). The container calls LinkedIn with auth cookies, LinkedIn sends back an SDUI / RSC stream, the extractor turns that into JSON, and the JSON goes back to the client.
 
 ---
 
@@ -279,7 +275,11 @@ Never commit `.env` to the repo.
 
 ## Deployment
 
-Pushes to `main` trigger a GitHub Actions workflow (`.github/workflows/cd_server.yml`) that:
+Pushes to `main` trigger a GitHub Actions workflow (`.github/workflows/cd_server.yml`).
+
+![CI/CD pipeline](docs/cicd-pipeline.png)
+
+What the workflow actually does:
 
 1. Builds a Docker image and pushes it to Docker Hub
 2. SSHs into the EC2 box at `65.1.248.25`
