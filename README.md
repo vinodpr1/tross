@@ -10,7 +10,7 @@ Fair warning: the live API is running on a plain EC2 IP over HTTP right now. I h
 
 ## How it works
 
-I didn't Use Puppeteer or any headless browser, and I didn't use LinkedIn's official API either.
+I didn't Use Puppeteer or any Headless browser, and I didn't use LinkedIn's official API either.
 
 What I did instead was open Chrome DevTools, visit a few LinkedIn profiles, and watch what network calls the site actually makes. Turns out LinkedIn loads profile pages through internal SDUI endpoints — basically POST requests to URLs like: 
 
