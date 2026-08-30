@@ -2,9 +2,7 @@
 
 This project is a Small backend service that takes a LinkedIn profile URL and returns the profile data as JSON — things like name, headline, experience, education, images, and so on.
 
-**Live endpoint:** http://65.1.248.25:3100
-
-Fair warning: the live API is running on a plain EC2 IP over HTTP right now. I had a domain set up earlier but it expired, and I haven't renewed it yet. It works fine for testing, but obviously you'd want a proper domain with HTTPS for anything real.
+**Live endpoint:** http://scraper.princechaudhary.xyz
 
 ---
 
@@ -26,25 +24,11 @@ The flow is pretty straightforward:
 
 ![How the API works](docs/how-it-works.png)
 
-Client sends a profile URL to `http://65.1.248.25:3100/api/v1/linkedin/profile`. That hits the Docker container on EC2 (port 3100). The container calls LinkedIn with auth cookies, LinkedIn sends back an SDUI / RSC stream, the extractor turns that into JSON, and the JSON goes back to the client.
+Client sends a profile URL to `http://scraper.princechaudhary.xyz/api/v1/linkedin/profile`. That hits the Docker container on EC2 (port 3100). The container calls LinkedIn with auth cookies, LinkedIn sends back an SDUI / RSC stream, the extractor turns that into JSON, and the JSON goes back to the client.
 
 ---
 
-## Why Bun?
-
-This project uses [Bun](https://bun.sh) as the primary runtime and build tool. I went with it mainly because:
-
-- **Fast installs** — `bun install` is noticeably quicker than npm
-- **Built-in TypeScript** — Bun can run `.ts` files directly without extra setup
-- **Fast bundling** — `bun build` bundles the project for production in one step
-- **Drop-in replacement** — `bun run <script>` works the same as `npm run <script>` for everything in `package.json`
-- **Smaller Docker image** — the production Dockerfile is based on `oven/bun:1`
-
-The production build still outputs standard Node-compatible JavaScript (`dist/index.js`), so the final app runs fine with Node inside Docker.
-
----
-
-## Running it locally
+## Local setup Guide
 
 You'll need a LinkedIn account to grab cookies from. For running the project itself, you can use **Bun** (recommended) or **Node.js + npm**.
 
@@ -71,24 +55,23 @@ Fill in your LinkedIn cookies in `.env`:
 HOST=0.0.0.0
 PORT=3100
 NODE_ENV=development
+
+
+# Public API CORS
 CORS_ORIGIN=*
 
-LINKEDIN_LI_AT=...
-LINKEDIN_JSESSIONID="ajax:..."
-LINKEDIN_CSRF_TOKEN=ajax:...
-LINKEDIN_BSCOOKIE="v=1&..."
+LINKEDIN_LI_AT=
+LINKEDIN_JSESSIONID=
+LINKEDIN_CSRF_TOKEN=
+LINKEDIN_BSCOOKIE=
+LINKEDIN_USER_AGENT=
+
 ```
 
 Start dev server:
 
 ```bash
-bun run dev
-```
-
-Or run TypeScript directly with Bun's built-in watcher (no tsx needed):
-
-```bash
-bun --watch src/index.ts
+bun dev
 ```
 
 Build and run for production:
@@ -115,34 +98,7 @@ Same `.env` setup as above. Then:
 npm run dev
 ```
 
-> **Note:** `npm run dev` and `bun run dev` both work — they run the same script (`tsx watch src/index.ts`). Use whichever you prefer.
 
-For production build with npm, you still need Bun installed because the build step uses `bun build`:
-
-```bash
-bun run build   # requires Bun
-npm start       # runs the built output with Node
-```
-
-If you only have Node and don't want to install Bun locally, you can rely on Docker for builds (see below).
-
----
-
-### Quick test (either setup)
-
-Server runs at http://localhost:3100
-
-```bash
-curl http://localhost:3100/
-```
-
-```bash
-curl -X POST http://localhost:3100/api/v1/linkedin/profile \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://www.linkedin.com/in/vinod-prajapati-87604b203/"}'
-```
-
----
 
 ## Running with Docker
 
@@ -150,7 +106,7 @@ The Docker image uses Bun for install and build, then runs the bundled app with 
 
 ```bash
 docker build -t linkedin-scraper-api .
-docker run --rm -p 3100:3100 --env-file .env linkedin-scraper-api
+docker run -p 3100:3100 --env-file .env linkedin-scraper-api
 ```
 
 Or pass the env vars directly if you prefer:
@@ -173,13 +129,13 @@ The service is deployed on an AWS EC2 instance. No domain at the moment — just
 **Health check**
 
 ```bash
-curl http://65.1.248.25:3100/
+curl http://scraper.princechaudhary.xyz
 ```
 
 **Fetch a profile**
 
 ```bash
-curl -X POST http://65.1.248.25:3100/api/v1/linkedin/profile \
+curl -X POST http://scraper.princechaudhary.xyz/api/v1/linkedin/profile \
   -H "Content-Type: application/json" \
   -d '{"url": "https://www.linkedin.com/in/vinod-prajapati-87604b203/"}'
 ```
@@ -234,16 +190,6 @@ The response looks something like this (fields vary depending on the profile):
   "url": "https://www.linkedin.com/in/username/"
 }
 ```
-
-Accepted URL formats:
-- `https://www.linkedin.com/in/username/`
-- `https://linkedin.com/in/username`
-- `www.linkedin.com/in/username` (https gets added automatically)
-
-Common errors:
-- `400` — missing or bad URL
-- `500` — LinkedIn cookies not set up
-- `502` — LinkedIn returned something we couldn't parse (often means cookies expired)
 
 ---
 
